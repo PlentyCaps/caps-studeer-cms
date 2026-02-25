@@ -2,9 +2,16 @@
 session_start();
 require_once dirname(__DIR__) . '/config.php';
 
-// Already logged in
+// Al ingelogd
 if (!empty($_SESSION['admin_logged_in'])) {
     header('Location: dashboard.php');
+    exit;
+}
+
+// Wachtwoord nog niet ingesteld → setup vereist
+$hash = getAdminPassHash();
+if ($hash === '') {
+    header('Location: setup.php');
     exit;
 }
 
@@ -14,16 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = trim($_POST['username'] ?? '');
     $pass = $_POST['password'] ?? '';
 
-    if ($user === ADMIN_USER && $pass === ADMIN_PASS) {
+    // Gebruik password_verify() — nooit plaintext vergelijken
+    if ($user === ADMIN_USER && password_verify($pass, $hash)) {
         session_regenerate_id(true);
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_user']      = $user;
         header('Location: dashboard.php');
         exit;
     }
-    $error = 'Onjuiste gebruikersnaam of wachtwoord.';
-    // Small delay to slow brute-force
+
+    // Vertraag om brute-force te remmen
     sleep(1);
+    $error = 'Onjuiste gebruikersnaam of wachtwoord.';
 }
 ?>
 <!DOCTYPE html>
@@ -35,21 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; }
-    @keyframes blob {
-      0%, 100% { transform: scale(1); }
-      50%       { transform: scale(1.08); }
-    }
+    @keyframes blob { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
     .blob { animation: blob 8s ease-in-out infinite; }
   </style>
 </head>
 <body class="min-h-screen bg-slate-950 flex items-center justify-center p-4">
 
-  <!-- Background blobs -->
   <div class="blob fixed top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full opacity-10" style="filter:blur(80px); pointer-events:none"></div>
   <div class="blob fixed bottom-1/4 right-1/4 w-80 h-80 bg-violet-600 rounded-full opacity-10" style="filter:blur(80px); pointer-events:none; animation-delay:3s"></div>
 
   <div class="relative z-10 w-full max-w-sm">
-    <!-- Logo -->
     <div class="flex flex-col items-center mb-8">
       <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-xl shadow-blue-500/30">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="text-slate-400 text-sm mt-1">Admin omgeving</p>
     </div>
 
-    <!-- Card -->
     <div class="rounded-3xl p-8" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(12px)">
 
       <?php if ($error): ?>
@@ -73,16 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <form method="POST" class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-2">Gebruikersnaam</label>
-          <input type="text" name="username" required autofocus
-            value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
-            class="w-full px-4 py-3 rounded-xl text-white text-sm focus:outline-none transition-all"
+          <input type="text" name="username" required autofocus autocomplete="username"
+            class="w-full px-4 py-3 rounded-xl text-sm focus:outline-none"
             style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:white"
             placeholder="admin">
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-2">Wachtwoord</label>
-          <input type="password" name="password" required
-            class="w-full px-4 py-3 rounded-xl text-white text-sm focus:outline-none transition-all"
+          <input type="password" name="password" required autocomplete="current-password"
+            class="w-full px-4 py-3 rounded-xl text-sm focus:outline-none"
             style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:white"
             placeholder="••••••••••••">
         </div>

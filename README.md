@@ -18,21 +18,24 @@ chmod 755 content/
 chmod 644 content/*.json
 ```
 
-### 3. Verander het wachtwoord
-Bewerk `config.php` en verander `ADMIN_PASS`:
-```php
-define('ADMIN_PASS', 'JouwEigenWachtwoord!');
-```
+### 3. Wachtwoord instellen (eerste keer)
+Ga naar `https://jouwdomein.nl/admin/setup.php` en stel je wachtwoord in.
+Het wachtwoord wordt opgeslagen als **bcrypt-hash** — nooit in plaintext.
+
+⚠️ **Verwijder `admin/setup.php` na gebruik!**
 
 ### 4. Klaar!
 - Website: `https://jouwdomein.nl/`
 - Admin: `https://jouwdomein.nl/admin/`
 
-## Inloggegevens (standaard)
-- Gebruikersnaam: `admin`
-- Wachtwoord: `StudeerSamen2026!`
-
-⚠️ **Verander het wachtwoord vóór livegang!**
+## Beveiliging
+- ✅ Wachtwoord opgeslagen als **bcrypt-hash** (cost 12)
+- ✅ Login via `password_verify()` — nooit plaintext vergelijking
+- ✅ `session_regenerate_id()` bij inloggen
+- ✅ Brute-force vertraging (sleep 1s bij fout wachtwoord)
+- ✅ `.htaccess` blokkeert directe toegang tot config, JSON en hashbestand
+- ✅ HttpOnly + SameSite sessie-cookies
+- ⚠️ Zet `session.cookie_secure = 1` in config.php als je HTTPS gebruikt
 
 ## Structuur
 ```

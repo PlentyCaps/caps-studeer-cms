@@ -1,0 +1,28 @@
+{
+  "trainingen": [
+    {
+      "vak": "Wiskunde",
+      "niveau": "VMBO / HAVO / VWO",
+      "duur": "6 sessies × 2 uur",
+      "groep": "Max. 8 leerlingen",
+      "kleur": "blue",
+      "topics": ["Algebra & functies", "Meetkunde", "Statistiek", "Examenstrategie"]
+    },
+    {
+      "vak": "Nederlands",
+      "niveau": "VMBO / HAVO / VWO",
+      "duur": "6 sessies × 2 uur",
+      "groep": "Max. 8 leerlingen",
+      "kleur": "violet",
+      "topics": ["Taalvaardigheid", "Schrijfvaardigheid", "Samenvatten", "Examenstrategie"]
+    },
+    {
+      "vak": "Engels",
+      "niveau": "HAVO / VWO",
+      "duur": "6 sessies × 2 uur",
+      "groep": "Max. 8 leerlingen",
+      "kleur": "emerald",
+      "topics": ["Reading comprehension", "Writing skills", "Vocabulary", "Examenstrategie"]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "teamleden": [
+    {"naam": "Student 1", "rol": "Wiskunde trainer",  "studie": "Wiskunde, RUG",             "initialen": "S1", "kleur": "blue"},
+    {"naam": "Student 2", "rol": "Nederlands trainer", "studie": "Taalwetenschappen, RUG",    "initialen": "S2", "kleur": "violet"},
+    {"naam": "Student 3", "rol": "Engels trainer",     "studie": "Int. Betrekkingen, RUG",    "initialen": "S3", "kleur": "emerald"},
+    {"naam": "Student 4", "rol": "Coördinator",        "studie": "Rechten, RUG",              "initialen": "S4", "kleur": "amber"},
+    {"naam": "Student 5", "rol": "Wiskunde trainer",   "studie": "Tech. Wiskunde, RUG",       "initialen": "S5", "kleur": "rose"},
+    {"naam": "Student 6", "rol": "Communicatie",       "studie": "Communicatiekunde, RUG",    "initialen": "S6", "kleur": "cyan"},
+    {"naam": "Student 7", "rol": "Organisatie",        "studie": "Bestuurskunde, RUG",        "initialen": "S7", "kleur": "orange"}
+  ]
+}

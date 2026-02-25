@@ -23,10 +23,11 @@ if (!$alreadySet && $_SERVER['REQUEST_METHOD'] === 'POST') {
         // Genereer bcrypt hash (cost factor 12)
         $hash = password_hash($pass1, PASSWORD_BCRYPT, ['cost' => 12]);
 
-        // Sla op in beveiligd bestand buiten public_html bereik (maar hier in content/)
-        // .htaccess blokkeert directe toegang tot .adminpass
+        // Sla op in beveiligd bestand
         if (file_put_contents(PASS_FILE, $hash) !== false) {
             $success = true;
+            // Verwijder setup.php automatisch na gebruik
+            @unlink(__FILE__);
         } else {
             $error = 'Kan wachtwoordbestand niet schrijven. Controleer bestandsrechten op content/.';
         }
@@ -80,8 +81,8 @@ if (!$alreadySet && $_SERVER['REQUEST_METHOD'] === 'POST') {
       </svg>
       <h2 class="text-white font-bold text-xl mb-2">Wachtwoord ingesteld!</h2>
       <p class="text-slate-400 text-sm mb-2">Je wachtwoord is veilig opgeslagen als bcrypt-hash.</p>
-      <p class="text-amber-400 text-sm font-semibold mb-6">
-        ⚠️ Verwijder nu <code>admin/setup.php</code> van je server!
+      <p class="text-emerald-400 text-sm mb-6">
+        ✓ Setup-pagina is automatisch verwijderd van de server.
       </p>
       <a href="login.php" class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all text-sm">
         Naar inlogpagina →

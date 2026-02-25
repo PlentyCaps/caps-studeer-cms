@@ -22,5 +22,8 @@ function getAdminPassHash(): string {
 // Sessie beveiligingsinstellingen
 ini_set('session.cookie_httponly', '1');
 ini_set('session.use_strict_mode', '1');
-ini_set('session.cookie_secure',   '0'); // Zet op '1' als je HTTPS gebruikt (aanbevolen!)
+// Detecteer automatisch of HTTPS actief is en stel cookie_secure in
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['SERVER_PORT'] ?? 80) == 443);
+ini_set('session.cookie_secure', $isHttps ? '1' : '0');
 ini_set('session.cookie_samesite', 'Strict');

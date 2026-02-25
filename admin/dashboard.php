@@ -8,6 +8,11 @@ if (empty($_SESSION['admin_logged_in'])) {
     exit;
 }
 
+// Zorg dat er altijd een CSRF-token in de sessie zit
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Load content helper
 function loadContent(string $section): array {
     $path = CONTENT_DIR . $section . '.json';
@@ -50,6 +55,7 @@ function val(array $arr, string $key): string { return e((string)($arr[$key] ?? 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — <?= e(SITE_TITLE) ?></title>
+  <meta name="csrf-token" content="<?= e($_SESSION['csrf_token']) ?>">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; }
@@ -256,6 +262,9 @@ function val(array $arr, string $key): string { return e((string)($arr[$key] ?? 
 </main>
 
 <script>
+// Lees CSRF-token uit meta-tag
+let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 function showToast(msg, ok) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -276,7 +285,7 @@ function saveSection() {
     if (el.name === '_section') return;
     const name = el.name;
 
-    // Handle nested: trainingen[0][vak]
+    // Verwerk geneste velden: trainingen[0][vak]
     const match = name.match(/^(\w+)\[(\d+)\]\[(\w+)\]$/);
     if (match) {
       const [, arr, idx, key] = match;
@@ -290,19 +299,27 @@ function saveSection() {
       return;
     }
 
-    // Regular flat fields
+    // Gewone velden
     data[name] = el.value;
   });
 
   fetch('save.php', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken          // ← CSRF-token meesturen
+    },
     body: JSON.stringify({ section, data })
   })
   .then(r => r.json())
   .then(res => {
-    if (res.success) showToast('✓ Opgeslagen!', true);
-    else showToast('Fout: ' + (res.error || 'onbekend'), false);
+    if (res.success) {
+      // Vernieuw token voor volgende opslag
+      if (res.csrf_token) csrfToken = res.csrf_token;
+      showToast('✓ Opgeslagen!', true);
+    } else {
+      showToast('Fout: ' + (res.error || 'onbekend'), false);
+    }
   })
   .catch(() => showToast('Verbindingsfout', false));
 }

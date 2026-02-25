@@ -29,10 +29,16 @@ Options -Indexes
     Deny from all
 </FilesMatch>
 
-# Optionele mod_rewrite
+# mod_rewrite: HTTPS afdwingen + clean URL
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
+
+    # ── Forceer HTTPS (verwijder de # om te activeren op live server) ──
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect /admin → /admin/
     RewriteRule ^admin$ admin/ [R=301,L]
 </IfModule>
 
